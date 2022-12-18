@@ -1,86 +1,61 @@
-from datetime import datetime
-from ntpath import join
+import awswrangler as wr
+from typing import Optional
+import pandas as pd
+from awsglue.utils import getResolvedOptions
+
 import sys
-from typing import Dict, Any
-import boto3
-from pyspark.context import SparkContext
-from pyspark.sql.functions import current_date
-
-
-class JobScript:
+class Glue:
 
     def __init__(self) -> None:
-        self.gelu_args = {}
-        self.source_path = ""
-        self.target_path = ""
-        self.spark = None
-        self.file_schema = []
+        self.database: Optional[str] = None
+        self.gelu_args = None
 
     def __glue_arg(self) -> None:
-        required_args = ["JOB_NAME", "env", "source_path", "athena_database"]
+        required_args = ["JOB_NAME", "env", "source_path", "database", "destination_path"]
         args = getResolvedOptions(sys.argv, required_args)
         self.gelu_args = args
 
     def get_glue_arg(self, key_name:str, default_value=None):
         if not self.gelu_args:
             self.__glue_arg()
+        print(self.gelu_args, "*"*100)
         return self.gelu_args.get(key_name, default_value)
 
-    def get_source_destination_path(self):
-        source_path_arg = self.get_glue_arg("source_path")
+    def _get_or_create_database(self):
+        database_name = self.get_glue_arg("database", "default")
+        databases = wr.catalog.databases()
+        if database_name not in databases.values:
+            wr.catalog.create_database(database_name)
+        self.database = database_name
+        return database_name
 
-        if not source_path_arg:
-            raise ValueError("source path shoud be not empty or None")
+    def s3_to_dataframe(self) -> pd.DataFrame:
+        if not self.get_glue_arg("source_path"):
+            raise ValueError("Source Path is not defined")
+        s3_path = self.get_glue_arg("source_path")
+        return wr.s3.read_csv(f"{s3_path}physical_currency_list.csv")
 
-        self.source_path = source_path_arg
-        job_name = self.get_glue_arg("JOB_NAME", "spark_job")
-        self.target_path = f"s3://phiter/destination/{job_name}/"
-
-    def __get_or_craete_spark_session(self):
-        if self.spark is None:
-            glue_etl = GlueETL()
-            self.spark = glue_etl.spark
-        
-    def __get_dataframe_schema(self, dataframe):
-        colume_data = [{"Name": col, "Type": dtype}
-                    for col, dtype in dict(dataframe.dtypes).items()]
-        return colume_data
-
-    def process_and_write_parquet(self):
-        self.__get_or_craete_spark_session()
-        df = self.spark.read.options(header=True).\
-            csv(self.source_path, inferSchema=True)
-        df_with_current_date = df.withColumn("date", current_date())
-
-        self.file_schema = self.__get_dataframe_schema(df_with_current_date)
-
-        df_with_current_date.write.mode("overwrite").\
-            partitionBy("date").parquet(self.target_path)
-
-    def create_glue_database_table(self):
-        glue_client = boto3.client("glue", "us-east-1")
-        job_name = self.get_glue_arg("JOB_NAME", "spark_job").replace("-", "_")
-        athena_database = self.get_glue_arg("athena_database", "phiter_databse").replace("-", "_")
-        catalog_details = {"Name": job_name,
-                        "Description": "script data",
-                        "StorageDescriptor": {
-                            "Columns": self.file_schema,
-                            "Location": self.target_path
-                        }
-                        }
-        data_catalog = DataCatalog(client=glue_client)
-        data_catalog.write_catalog(database_name=athena_database, table_name=job_name,
-                                catalog_details=catalog_details,
-                                data_format="parquet")
-
-
-
+    def s3_to_parquet(self, df:pd.DataFrame):
+        destination_path = self.get_glue_arg("destination_path")
+        res = wr.s3.to_parquet(
+            df=df,
+            path=destination_path,
+            dataset=True,
+            database=self.database,
+            table="daily",
+            mode="overwrite"
+        )
 
 
 if __name__ == "__main__":
+    glue = Glue()
+    df = glue.s3_to_dataframe()
+    glue._get_or_create_database()
+    glue.s3_to_parquet(df=df)
 
-    job = JobScript()
 
-    job.get_source_destination_path()
-    job.process_and_write_parquet()
-    job.create_glue_database_table()
+
+
+
+
+

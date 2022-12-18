@@ -2,7 +2,7 @@ resource "aws_glue_job" "glue_job" {
   name     = var.job_name
   role_arn = var.glue_role_arn
 
-  glue_version = "2.0"
+  glue_version = "3.0"
   worker_type       = var.worker_type
   number_of_workers = var.number_of_workers
   max_retries       = var.max_retries
@@ -12,7 +12,7 @@ resource "aws_glue_job" "glue_job" {
   }
 
   default_arguments = merge({
-    "--enable-auto-scaling"                   = "true"
+    "--enable-auto-scaling"                   = "false"
     "--enable-continuous-cloudwatch-log"      = "true"
     "--enable-continuous-log-filter"          = "true"
     "--enable-metrics"                        = "true"
@@ -21,7 +21,7 @@ resource "aws_glue_job" "glue_job" {
     "--env"                                   = var.environmanet
     "--job-bookmark-option"                   = var.job_bookmark
     "--job-language"                          = "python"
-
+    "--additional-python-modules"             = "awswrangler"
     },
     var.default_arguments
   )
