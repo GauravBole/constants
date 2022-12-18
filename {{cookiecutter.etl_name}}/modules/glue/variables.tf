@@ -39,7 +39,7 @@ variable "number_of_workers" {
 }
 
 variable "region_name" {
-  default = "{{cookiecutter.region}}"
+  default = "{{cookiecutter.region_name}}"
 }
 
 
@@ -57,4 +57,7 @@ variable "tags" {
 
 variable "worker_type" {
   default = "Standard"
+}
+variable "glue_role_arn" {
+
 }

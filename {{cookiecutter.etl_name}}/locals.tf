@@ -1,3 +1,6 @@
 locals {
-  "aws_account_id": "${var.aws_account_id == "" ? data.aws_caller_identity.current.account_id : var.aws_account_id}"
+  aws_account_id = "${var.aws_account_id == "" ? data.aws_caller_identity.current.account_id : var.aws_account_id}"
+}
+locals {
+  bucket_name = format("%s%s",var.code_bucket, tostring(data.aws_caller_identity.current.account_id))
 }

@@ -33,7 +33,7 @@ class Glue:
         if not self.get_glue_arg("source_path"):
             raise ValueError("Source Path is not defined")
         s3_path = self.get_glue_arg("source_path")
-        return wr.s3.read_csv(f"{s3_path}physical_currency_list.csv")
+        return wr.s3.read_csv(s3_path)
 
     def s3_to_parquet(self, df:pd.DataFrame):
         destination_path = self.get_glue_arg("destination_path")

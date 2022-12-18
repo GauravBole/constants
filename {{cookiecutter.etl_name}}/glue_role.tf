@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "glue_policy" {
     sid = "GlueS3RadAction"
     actions = [
       "s3:Get*",
-      "s3:list*",
+      "s3:List*",
     ]
     resources = ["*"] # Todo
   }
