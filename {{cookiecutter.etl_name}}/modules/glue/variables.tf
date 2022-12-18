@@ -61,3 +61,6 @@ variable "worker_type" {
 variable "glue_role_arn" {
 
 }
+variable "script_bucket" {
+
+}
