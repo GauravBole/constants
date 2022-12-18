@@ -12,4 +12,3 @@ output "account_region" {
 output "caller_user" {
   value = data.aws_caller_identity.current.user_id
 }
-# https://stackoverflow.com/questions/51967311/terraform-use-data-source-output-in-variable-default
