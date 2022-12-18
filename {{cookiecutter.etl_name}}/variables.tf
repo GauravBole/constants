@@ -17,3 +17,6 @@ variable "project_name" {
 variable "athena_database" {
   default =  "{{cookiecutter.database_name}}"
 }
+variable "script_bucket" {
+
+}
