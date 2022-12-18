@@ -39,7 +39,7 @@ variable "number_of_workers" {
 }
 
 variable "region_name" {
-  default = "{{cookiecutter.region_name}}"
+  default = "{%- if not cookiecutter.region_name -%} us-east-1 {%- endif -%}"
 }
 
 
