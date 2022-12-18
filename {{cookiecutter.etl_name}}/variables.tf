@@ -65,10 +65,6 @@
 #   default = {}
 # }
 
-# variable "worker_type" {
-#   # default = "{{cookiecutter.worker_type}}"
-#   default = "Standard"
-# }
 # variable "athena_database" {
 #   default = "phiter-demo"
 # }
