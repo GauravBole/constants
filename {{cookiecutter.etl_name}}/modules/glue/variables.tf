@@ -1,15 +1,13 @@
 variable "aws_account_id" {
-
+  default = ""
 }
 
 variable "code_bucket" {
   default = "{{cookiecutter.etl_name}}"
-  # default = "mybucket2-989390415418"
 }
 
 variable "code_s3_prefix" {
   default = "{{cookiecutter.etl_name}}"
-  # default = "etl"
 }
 
 variable "default_arguments" {
@@ -18,10 +16,6 @@ variable "default_arguments" {
 
 variable "environmanet" {
   default = "dev"
-}
-
-variable "glue_role_arn" {
-
 }
 
 variable "job_bookmark" {
@@ -46,13 +40,11 @@ variable "number_of_workers" {
 
 variable "region_name" {
   default = "{{cookiecutter.region}}"
-  # default = "ap-south-1"
 }
 
 
 variable "project_name" {
   default = "{{cookiecutter.etl_name}}"
-  # default = "default_projetct1"
 }
 
 variable "script_file" {

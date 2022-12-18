@@ -1,7 +1,7 @@
 module "glue_etl_job" {
   source = "./modules/glue"
 
-  aws_account_id = var.aws_account_id
+  aws_account_id = local.aws_account_id
   environmanet   = var.environmanet
   job_name       = format("%s_%s", var.project_name, var.environmanet)
   code_bucket    = var.code_bucket
@@ -10,7 +10,7 @@ module "glue_etl_job" {
 
   default_arguments = {
     "--TempDir"     = format("s3://%s/temp_dir/", var.code_bucket)
-    "--account_id"  = var.aws_account_id
+    "--account_id"  = local.aws_account_id
     "--database"    = var.athena_database
     "--code_bucket" = var.code_bucket
     "--source_path"      = format("s3://%s/source/", var.code_bucket)
