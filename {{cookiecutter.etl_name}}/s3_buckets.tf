@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "project_bucket" {
-  bucket = local.code_bucket
+  bucket = local.bucket_name
   tags = {
     Name        = "Environmanet"
     Environment = var.environmanet
