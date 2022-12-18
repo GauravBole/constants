@@ -2,7 +2,7 @@
     "etl_name_title": "ETL name eg demo etl",
     "etl_name": "{{cookiecutter.etl_name_title.lower().replace(' ', '_')}}",
     "account_id": "AWS account Id to craete ETL pilpeline",
-    "region_name": "Enter region name",
+    "region_name": "Enter region name:",
     "database_name": "Enter catalog database name:"
     
 }
