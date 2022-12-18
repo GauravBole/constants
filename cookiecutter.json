@@ -3,6 +3,7 @@
     "etl_name": "{{cookiecutter.etl_name_title.lower().replace(' ', '_')}}",
     "account_id": "AWS account Id to craete ETL pilpeline",
     "region_name": "us-east-1",
-    "database_name": "Enter catalog database name:"
+    "database_name": "Enter catalog database name:",
+    "backend_bucket_name":""
     
 }
